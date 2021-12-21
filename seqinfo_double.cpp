@@ -47,46 +47,40 @@
 #include <vector>
 
 
-//static std::set<double> s_perfectNumber{ 6.0, 28.0, 496.0, 8128.0, 33550336.0, 8589869056.0, 137438691328.0, 2305843008139952128.0, 2658455991569831744654692615953842176.0, 191561942608236107294793378084303638130997321548169216.0 };
-static std::set<std::string> s_perfectNumber{ "6", "28", "496", "8128", "33550336", "8589869056", "137438691328", "2305843008139952128", "2658455991569831744654692615953842176", "191561942608236107294793378084303638130997321548169216" };
+static std::set<double> s_perfectNumber{ 6.0, 28.0, 496.0, 8128.0, 33550336.0, 8589869056.0, 137438691328.0, 2305843008139952128.0, 2658455991569831744654692615953842176.0, 191561942608236107294793378084303638130997321548169216.0 };
 
 struct reginaDataLine {
-    int32_t     elA;  // ** Not used - index equals sequence **
-    int16_t     elB;  // <0=cycle, 0=open ended, 1=prime
-    int32_t     elC;  //  number of terms at sequence end or 10^50
-    std::string elD;  // for elB=<0,0,1: equals cycle entry term, smallest sequence for merges, terminating prime
-    int32_t     elE;  // ** Not currently used - value computed by program **
-    int32_t     elF;  // number of digits for largest term reached (up to 10^50 for open-ended)
-    int32_t     elG;  // number of relative minimums
-    int32_t     elH;  // number of relative maximums
-    int32_t     elI;  // number of parity changes
-    int32_t     elJ;  // record number of consecutive even abundant terms
-    int32_t     elK;  // record number of consecutive even deficient terms
-    int32_t     elL;  // record number of consecutive odd deficient terms
-    int32_t     elM;  // record number of consecutive odd abundant terms
-    int32_t     elN;  // number of down driver extracts
-    double      elO;  // smallest quotient of two consecutive terms
-    double      elP;  // largest quotient of two consecutive terms
-    double      elQ;  // arithmetic mean of all quotients of two consecutive terms
-    double      elR;  // geometric mean of all quotients of two consecutive terms
-    double      elS;  // arithmetic mean of the number of digits of all the minimums of the sequence
-    double      elT;  // arithmetic mean of the number of digits of all the maximums of the sequence
-    bool        ulist;  // used for advanced searches of results lists
+    int32_t elA;  // ** Not used - index equals sequence **
+    int16_t elB;  // <0=cycle, 0=open ended, 1=prime
+    int32_t elC;  //  number of terms at sequence end or 10^50
+    double  elD;  // for elB=<0,0,1: equals cycle entry term, smallest sequence for merges, terminating prime
+    int32_t elE;  // ** Not currently used - value computed by program **
+    int32_t elF;  // number of digits for largest term reached (up to 10^50 for open-ended)
+    int32_t elG;  // number of relative minimums
+    int32_t elH;  // number of relative maximums
+    int32_t elI;  // number of parity changes
+    int32_t elJ;  // record number of consecutive even abundant terms
+    int32_t elK;  // record number of consecutive even deficient terms
+    int32_t elL;  // record number of consecutive odd deficient terms
+    int32_t elM;  // record number of consecutive odd abundant terms
+    int32_t elN;  // number of down driver extracts
+    double  elO;  // smallest quotient of two consecutive terms
+    double  elP;  // largest quotient of two consecutive terms
+    double  elQ;  // arithmetic mean of all quotients of two consecutive terms
+    double  elR;  // geometric mean of all quotients of two consecutive terms
+    double  elS;  // arithmetic mean of the number of digits of all the minimums of the sequence
+    double  elT;  // arithmetic mean of the number of digits of all the maximums of the sequence
+    bool    ulist;  // used for advanced searches of results lists
 
     friend std::istream& operator >> (std::istream& is, reginaDataLine& seq) {
         char comma;
-        std::stringstream xx;
-
         seq.ulist = false;
 
-        is \
+        return is \
             >> seq.elA >> comma \
             >> seq.elB >> comma \
-            >> seq.elC >> comma;
-
-            std::getline(is, seq.elD, ',');
-            
-            is  \
+            >> seq.elC >> comma \
+            >> seq.elD >> comma \
             >> seq.elE >> comma \
             >> seq.elF >> comma \
             >> seq.elG >> comma \
@@ -103,8 +97,6 @@ struct reginaDataLine {
             >> seq.elR >> comma \
             >> seq.elS >> comma \
             >> seq.elT;
-
-            return is;
     }
 };
 
@@ -159,16 +151,16 @@ public:
     }
 };
 
-// std::string dToString(double num)
-// {
-//     std::ostringstream streamDouble;
-// 
-//     // Set Fixed -Point Notation + Set precision to 0 digits
-//     streamDouble << std::fixed << std::setprecision(0) << num;
-// 
-//     // Get string from output string stream
-//     return streamDouble.str();
-// }
+std::string dToString(double num)
+{
+    std::ostringstream streamDouble;
+
+    // Set Fixed -Point Notation + Set precision to 0 digits
+    streamDouble << std::fixed << std::setprecision(0) << num;
+
+    // Get string from output string stream
+    return streamDouble.str();
+}
 
 // Routine to update all open-ended sequences
 // This function does not change the original regina_file, but provides an
@@ -208,7 +200,7 @@ void helptext() {
 void primeslist(reginaData& data) {
     std::ofstream pout;
     char yn;
-    std::map<std::string, uint32_t> primeCountMap;
+    std::map<double, uint32_t> primeCountMap;
 
     std::cout << "This process will take several hours.  Continue? (y/n):";
     std::cin >> yn;
@@ -310,7 +302,7 @@ void advanced(const struct reginaData& data, bool uselist) {
     if (reginaSize < std::numeric_limits<int32_t>::max())
         indexMax = static_cast<int32_t>(reginaSize);
     else
-        assert(false);  // Time to update Seqinfo.
+        assert(false);  // Time to update seqinfo.
 
     const auto [a, b] = getParamPair<int32_t>("Sequence filter a (mod b) (a b): ", 0, 1, indexMax, true);
     const auto [c, d] = getParamPair<int32_t>("Sequence range (begin end): ", 2, indexMax, indexMax);
@@ -432,7 +424,7 @@ void advanced(const struct reginaData& data, bool uselist) {
 }
 
 // This routine finds all sequences that terminate with the supplied prime
-void primesfind(reginaData& data, std::string primeToSearch) {
+void primesfind(reginaData& data, double primeToSearch) {
     char yn;
     std::ofstream resultFS;
     uint32_t rcount;
@@ -599,10 +591,6 @@ bool loadReginaFile(const std::string& reginaFileName, reginaData& data) {
         std::cout << "Loading " << reginaFileName << "..." << std::endl;
 
         auto start = std::chrono::system_clock::now();
-        char yn;
-        std::cin.seekg(0, std::ios::end);
-        std::cin.clear();
-        std::cin >> yn;
 
         reginaStream >> data;
 
@@ -638,19 +626,23 @@ bool loadReginaFile(const std::string& reginaFileName, reginaData& data) {
 }
 
 void managePrimeCommand(reginaData& data, const std::string& commandStr) {
+    std::string tmp;
+    bool found;
+
     if (commandStr.length() > 1) {
-        std::string primeStr{ commandStr.substr(1) };
+        tmp.assign(commandStr.substr(1));
+        double primeToSearch = std::stod(tmp);
         const auto& vLines = data.regina;
 
-        bool found = std::any_of(std::cbegin(vLines), std::cend(vLines), [&](const reginaDataLine& line) {
-            return ((line.elB == 1) && (line.elD == primeStr));
+        found = std::any_of(std::cbegin(vLines), std::cend(vLines), [&](const reginaDataLine& line) {
+            return ((line.elB == 1) && (line.elD == primeToSearch));
             }
         );
 
         if (found)
-            primesfind(data, primeStr);
+            primesfind(data, primeToSearch);
         else
-            std::cout << "No sequences found that terminate with " << primeStr << "." << std::endl;
+            std::cout << "No sequences found that terminate with " << tmp << "." << std::endl;
 
     }
     else
@@ -662,12 +654,12 @@ void manageOpenEndedSequence(reginaData& data, int32_t sequenceNumber, int32_t s
     std::ofstream resultFs;
     uint32_t rcount;
     auto& vLines = data.regina;
-    std::string seqPrimeStr = vLines[sequenceIndex].elD;
+    double seqPrime = vLines[sequenceIndex].elD;
 
     std::cout << sequenceNumber << " is open ended. ";
 
-    if (std::to_string(sequenceNumber) != seqPrimeStr) {
-        std::cout << "It merges with " << seqPrimeStr << "." << std::endl;
+    if (sequenceNumber != seqPrime) {
+        std::cout << "It merges with " << seqPrime << "." << std::endl;
         return;
     }
 
@@ -686,13 +678,13 @@ void manageOpenEndedSequence(reginaData& data, int32_t sequenceNumber, int32_t s
     }
 
     if (toFile)
-        resultFs << "All sequences that merge with " << seqPrimeStr << ":" << std::endl;
+        resultFs << "All sequences that merge with " << seqPrime << ":" << std::endl;
 
     rcount = 0;
     const uint16_t spacing = data.lastIndexSize + 2;
 
     std::for_each(std::next(std::begin(vLines), ++sequenceIndex), std::end(vLines), [&](reginaDataLine& line) {
-        if (line.elD == seqPrimeStr) {
+        if (line.elD == seqPrime) {
             if (toFile)
                 resultFs << line.elA << std::endl;
 
@@ -727,7 +719,7 @@ void manageOpenEndedSequence(reginaData& data, int32_t sequenceNumber, int32_t s
         std::cout << "No merges found." << std::endl;
 }
 
-void LoadCycleSequence(const std::string primeStr, std::unordered_set<std::string>& cycleSet) {
+void LoadCycleSequence(const std::string primeStr, std::unordered_set<double>& cycleSet) {
     std::ifstream cycleFs;
     std::string line;
 
@@ -742,7 +734,7 @@ void LoadCycleSequence(const std::string primeStr, std::unordered_set<std::strin
             size_t founde = line.find('=', foundp + 4);
             std::string composite = line.substr(foundp + 4, founde - (1 + foundp + 4));
             // std::(unordered_)set doesn't have duplicated. Ne need later to reduce index for listing without dup.
-            (void)cycleSet.emplace(composite);
+            (void)cycleSet.emplace(std::stod(composite));
         }
 
         cycleFs.close();
@@ -751,12 +743,13 @@ void LoadCycleSequence(const std::string primeStr, std::unordered_set<std::strin
         std::cout << "An error was encountered trying to read cycle.tmp!" << std::endl;
 }
 
-void managexxx(reginaData& data, const uint32_t sequenceNumber, const uint32_t sequenceIndex, std::unordered_set<std::string>& cycleSet)
+void managexxx(reginaData& data, const uint32_t sequenceNumber, const uint32_t sequenceIndex, std::unordered_set<double>& cycleSet)
 {
     std::ofstream resultFs;
     char yn;
     auto& vLines = data.regina;
-    std::string seqPrimeStr = vLines[sequenceIndex].elD;
+    double seqPrime = vLines[sequenceIndex].elD;
+    std::string seqPrimeStr = dToString(seqPrime);
 
     std::cin >> yn;
 
@@ -772,7 +765,7 @@ void managexxx(reginaData& data, const uint32_t sequenceNumber, const uint32_t s
     }
 
     if (toFile) {
-        if (s_perfectNumber.contains(seqPrimeStr))
+        if (s_perfectNumber.contains(seqPrime))
             resultFs << "All sequences that end with the perfect number " << seqPrimeStr << ":" << std::endl;
         else
             resultFs << "All sequences that end within the same cycle as " << seqPrimeStr << ":" << std::endl;
@@ -818,7 +811,7 @@ void managexxx(reginaData& data, const uint32_t sequenceNumber, const uint32_t s
         std::cout << rcount << " sequence found." << std::endl;
 }
 
-bool  manageCycleNumber(reginaData& data, const uint32_t sequenceNumber, const uint32_t sequenceIndex, std::unordered_set<std::string>& cycleSet) {
+bool  manageCycleNumber(reginaData& data, const uint32_t sequenceNumber, const uint32_t sequenceIndex, std::unordered_set<double>& cycleSet) {
     std::ofstream resultFs;
     std::ifstream  cycleFs;
     std::string line;
@@ -842,14 +835,18 @@ bool  manageCycleNumber(reginaData& data, const uint32_t sequenceNumber, const u
     if (toFile)
         resultFs << sequenceNumber << " ends with the following cycle:" << std::endl;
 
-    LoadCycleSequence(vLines[sequenceIndex].elD, cycleSet);
+    double seqPrime = vLines[sequenceIndex].elD;
+    std::string seqPrimeStr = dToString(seqPrime);
+
+    LoadCycleSequence(seqPrimeStr, cycleSet);
 
     // std::set is ordered and doesn't have duplicated. No need to reduce the parsing by 2.
-    std::for_each(std::cbegin(cycleSet), std::cend(cycleSet), [&](const std::string& composite) {
+    std::for_each(std::cbegin(cycleSet), std::cend(cycleSet), [&](const double composite) {
+        std::string compositeStr = dToString(composite);
         if (toFile)
-            resultFs << composite << std::endl;
+            resultFs << compositeStr << std::endl;
 
-        std::cout << composite << std::endl;
+        std::cout << compositeStr << std::endl;
         }
     );
 
@@ -864,7 +861,7 @@ bool  manageCycleNumber(reginaData& data, const uint32_t sequenceNumber, const u
 
 bool manageEndWithPerfectNumber(reginaData& data, const uint32_t sequenceNumber, const uint32_t sequenceIndex) {
     auto& vLines = data.regina;
-    std::string primeStr = vLines[sequenceIndex].elD;
+    std::string primeStr = dToString(vLines[sequenceIndex].elD);
 
     std::cout << sequenceNumber << " ends with the perfect number " << primeStr << "," << std::endl;
     std::cout << "Display all sequences that end with " << primeStr << "? (y/n/c/f): ";
@@ -876,13 +873,13 @@ bool managePerfectNumber(reginaData& data, const uint32_t sequenceNumber, const 
     auto& vLines = data.regina;
 
     std::cout << sequenceNumber << " is a perfect number." << std::endl;
-    std::cout << "Display all sequences that end with " << vLines[sequenceIndex].elD << "? (y/n/c/f): ";
+    std::cout << "Display all sequences that end with " << dToString(vLines[sequenceIndex].elD) << "? (y/n/c/f): ";
 
     return true;
 }
 
 void manageSequence(reginaData& data, const std::string& sequenceNumberStr) {
-    std::unordered_set<std::string> cycleSet;
+    std::unordered_set<double> cycleSet;
     auto& vLines = data.regina;
 
     int32_t sequenceNumber = std::stol(sequenceNumberStr);
@@ -894,9 +891,8 @@ void manageSequence(reginaData& data, const std::string& sequenceNumberStr) {
     }
 
     bool noError{ false };
-
     if (vLines[sequenceIndex].elB == 1) {
-        std::cout << sequenceNumber << " terminates with prime " << vLines[sequenceIndex].elD << "." << std::endl;
+        std::cout << sequenceNumber << " terminates with prime " << dToString(vLines[sequenceIndex].elD) << "." << std::endl;
         primesfind(data, vLines[sequenceIndex].elD);
     }
     else if (vLines[sequenceIndex].elB == 0) {
@@ -904,7 +900,7 @@ void manageSequence(reginaData& data, const std::string& sequenceNumberStr) {
     }
     else if (vLines[sequenceIndex].elB < 0) {
         if (s_perfectNumber.contains(vLines[sequenceIndex].elD)) {
-            if (s_perfectNumber.contains(sequenceNumberStr))
+            if (s_perfectNumber.contains(sequenceNumber))
                 noError = managePerfectNumber(data, sequenceNumber, sequenceIndex);
             else
                 noError = manageEndWithPerfectNumber(data, sequenceNumber, sequenceIndex);
